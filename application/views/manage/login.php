@@ -62,7 +62,7 @@
         </div>
         <?php echo form_close(); ?>
 
-        <a href="#">I forgot my password</a><br>
+        <a href="<?php echo site_url('manage/auth/forgot') ?>">I forgot my password</a><br>
         <a href="<?php echo site_url('manage/auth/register') ?>" class="text-center">Register a new user</a>
 
       </div>

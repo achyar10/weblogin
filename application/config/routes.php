@@ -54,6 +54,7 @@ $route['manage/auth'] = 'auth/auth_set/login';
 $route['manage/auth'] = 'auth/auth_set/register';
 $route['manage/auth'] = 'auth/auth_set/confirmation';
 $route['manage/auth'] = 'auth/auth_set/forgot';
+$route['manage/auth'] = 'auth/auth_set/rpw';
 $route['manage/([a-zA-Z_-]+)'] = '$1/$1_set';
 $route['manage/auth/(:any)'] = 'auth/auth_set/$1';
 $route['manage/([a-zA-Z_-]+)/(:any)'] = '$1/$1_set/$2';

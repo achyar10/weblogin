@@ -70,7 +70,6 @@
 
                   <p>
                     <?php echo ucfirst($this->session->userdata('ufullname')); ?>
-                    <small><?php echo ucfirst($this->session->userdata('urolename')); ?></small>
                     <small><?php echo $this->session->userdata('uemail'); ?></small>
                   </p>
                 </li>

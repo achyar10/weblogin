@@ -3,14 +3,21 @@
 if (isset($user)) {
 	$id = $user['user_id'];
 	$inputFullnameValue = $user['user_full_name'];
-	$inputRoleValue = $user['user_role_role_id'];
+	$inputGenderValue = $user['user_gender'];
+	$inputPobValue = $user['user_pob'];
+	$inputDobValue = $user['user_dob'];
+	$inputPhoneValue = $user['user_phone'];
+	$inputAddressValue = $user['user_address'];
 	$inputEmailValue = $user['user_email'];
-	$inputDescValue = $user['user_description'];
+
 } else {
-	$inputFullnameValue = set_value('user_full_name');
-	$inputRoleValue = set_value('user_role_role_id');
+	$inputGenderValue = set_value('user_gender');
+	$inputPobValue = set_value('user_pob');
+	$inputDobValue = set_value('user_dob');
+	$inputPhoneValue = set_value('user_phone');
+	$inputAddressValue = set_value('user_address');
 	$inputEmailValue = set_value('user_email');
-	$inputDescValue = set_value('user_description');
+
 }
 ?>
 
@@ -39,7 +46,7 @@ if (isset($user)) {
 					<div class="box-body">
 						<?php echo validation_errors(); ?>
 						<?php if (isset($user)) { ?>
-						<input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
+							<input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
 						<?php } ?>
 						<div class="form-group">
 							<label>Email <small data-toggle="tooltip" title="Wajib diisi">*</small></label>
@@ -51,21 +58,39 @@ if (isset($user)) {
 							<input name="user_full_name" type="text" class="form-control" value="<?php echo $inputFullnameValue ?>" placeholder="Nama lengkap">
 						</div>
 
-						<?php if (!isset($user)) { ?>
 						<div class="form-group">
-							<label>Password <small data-toggle="tooltip" title="Wajib diisi">*</small></label>
-							<input name="user_password" type="password" class="form-control" placeholder="Password">
-						</div>            
+							<label>Jenis Kelamin</label>
+							<div class="radio">
+								<label>
+									<input type="radio" name="user_gender" value="L" <?php echo ($inputGenderValue == 'L') ? 'checked' : ''; ?>> Laki-laki
+								</label>&nbsp;&nbsp;
+								<label>
+									<input type="radio" name="user_gender" value="P" <?php echo ($inputGenderValue == 'P') ? 'checked' : ''; ?>> Perempuan
+								</label>
+							</div>
+						</div>
 
 						<div class="form-group">
-							<label>Konfirmasi Password <small data-toggle="tooltip" title="Wajib diisi">*</small></label>
-							<input name="passconf" type="password" class="form-control" placeholder="Konfirmasi Password">
-						</div>       
-						<?php } ?>
+							<label>Tempat Lahir</label>
+							<input type="text" class="form-control" name="user_pob" placeholder="Tempat Lahir" value="<?php echo $inputPobValue ?>">
+						</div>
 
 						<div class="form-group">
-							<label>Deskripsi</label>
-							<textarea class="form-control" name="user_description" placeholder="Deskripsi"><?php echo $inputDescValue ?></textarea>
+							<label>Tanggal Lahir </label>
+							<div class="input-group date " data-date="" data-date-format="yyyy-mm-dd">
+								<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+								<input class="form-control" type="text" name="user_dob" readonly="readonly" placeholder="Tanggal" value="<?php echo $inputDobValue; ?>">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>No. Handphone</label>
+							<input type="text" class="form-control" name="user_phone" placeholder="No. Handphone" value="<?php echo $inputPhoneValue ?>">
+						</div>
+
+						<div class="form-group">
+							<label>Alamat</label>
+							<textarea class="form-control" name="user_address" placeholder="Alamat Lengkap"><?php echo $inputAddressValue ?></textarea>
 						</div>
 
 						<p class="text-muted">*) Kolom wajib diisi.</p>
@@ -80,9 +105,9 @@ if (isset($user)) {
 						<label >Foto</label>
 						<a href="#" class="thumbnail">
 							<?php if (isset($user) AND $user['user_image'] != NULL) { ?>
-							<img src="<?php echo upload_url('users/' . $user['user_image']) ?>" class="img-responsive avatar">
+								<img src="<?php echo upload_url('users/' . $user['user_image']) ?>" class="img-responsive avatar">
 							<?php } else { ?>
-							<img id="target" alt="Choose image to upload">
+								<img id="target" alt="Choose image to upload">
 							<?php } ?>
 						</a>
 						<input type='file' id="user_image" name="user_image">

@@ -128,7 +128,7 @@ class Auth_set extends CI_Controller {
       $email = $this->input->post('email', TRUE);
       $password = $this->input->post('password', TRUE);
       $token = $this->input->post('token', TRUE);
-      $user = $this->Users_model->get(array('email' => $email, 'password' => sha1($password), 'token' => $token));
+      $user = $this->Users_model->get(array('user_email' => $email, 'password' => sha1($password), 'token' => $token));
 
       if (count($user) > 0) {
         if ($user[0]['user_status']!= 'active' OR $user[0]['user_status']== 'not_active') {
@@ -182,17 +182,16 @@ class Auth_set extends CI_Controller {
       'recaptcha_html' => $this->recaptcha->render()
     );
 
-
     $this->form_validation->set_rules('email', 'Email', 'trim|required');
     $this->form_validation->set_rules('g-recaptcha-response', '<strong>Captcha</strong>', 'callback_getResponseCaptcha');
     if ($_POST AND $this->form_validation->run() == TRUE) {
       $email = $this->input->post('email', TRUE);
-      $user = $this->Users_model->get(array('email' => $email));
+      $user = $this->Users_model->get(array('user_email' => $email));
       if($this->config->item('email'))
       {
         $params = array();
         $params['user'] = $user[0];
-        $params['url'] = site_url('manage/auth/rpw?e='.$user[0]['user_email'].'&c='.$user[0]['password']);
+        $params['url'] = site_url('manage/auth/rpw?e='.$user[0]['user_email'].'&c='.$user[0]['user_password']);
         $this->email->from($this->config->item('from'), $this->config->item('from_name'));
         $this->email->to($email); 
         $this->email->subject('Konfirmasi Lupa Password');
@@ -203,6 +202,43 @@ class Auth_set extends CI_Controller {
 
     } else {
       $this->load->view('manage/forgot', $data);
+    }
+  }
+
+  function rpw() {
+
+    $this->form_validation->set_rules('password', 'Password', 'trim|required');
+    $this->form_validation->set_rules('passconf', 'Konfirmasi password', 'trim|required|xss_clean|matches[password]');
+    if ($_POST) {
+      if($this->form_validation->run() == TRUE){
+
+        $email = $this->input->post('email', TRUE);
+        $code = $this->input->post('code', TRUE);
+        $password = $this->input->post('password', TRUE);
+
+        $user = $this->Users_model->get(array('user_email' => $email, 'password' => $code));
+
+        if (count($user) > 0) {
+          $this->Users_model->add(array('user_id' => $user[0]['user_id'], 'user_password' => sha1($password)));
+          redirect('manage/auth/login');
+        }else{
+          redirect(site_url());
+        }
+      }else{
+        $this->session->set_flashdata('failed', 'Maaf, username dan password tidak cocok!');
+        redirect(site_url('manage/auth/rpw?e='.$email.'&c='.$code));
+      }
+    } else {
+      $q = $this->input->get(NULL, TRUE);
+      $user = $this->Users_model->get(array('user_email' => $q['e'], 'password' => $q['c']));
+      if (count($user) > 0) {
+        $data['email'] = $q['e'];
+        $data['code'] = $q['c'];
+        $this->load->view('manage/rpw', $data);
+      }else{
+        redirect('manage');
+      }
+
     }
   }
 

@@ -27,7 +27,7 @@
 
 						<h3 class="profile-username text-center"><?php echo $user['user_full_name']; ?></h3>
 
-						<p class="text-muted text-center"><?php echo $user['role_name']; ?></p>
+						<p class="text-muted text-center"><?php echo $user['user_email']; ?></p>
 
 						<ul class="list-group list-group-unbordered">
 							<li class="list-group-item">
@@ -69,7 +69,7 @@
 
 						<strong><i class="fa fa-file-text-o margin-r-5"></i> Notes</strong>
 
-						<p><?php echo $user['user_description'] ?></p>
+
 						<a href="<?php echo site_url('manage/profile/edit/') ?>" class="btn btn-success"><b>Edit</b></a>
 					</div>
 					<!-- /.box-body -->

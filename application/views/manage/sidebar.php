@@ -6,9 +6,9 @@
         <div class="user-panel">
             <div class="pull-left image">
                 <?php if ($this->session->userdata('user_image') != null) { ?>
-                <img src="<?php echo upload_url().'/users/'.$this->session->userdata('user_image'); ?>" class="img-responsive">
+                    <img src="<?php echo upload_url().'/users/'.$this->session->userdata('user_image'); ?>" class="img-responsive">
                 <?php } else { ?>
-                <img src="<?php echo media_url() ?>img/user.png" class="img-responsive">
+                    <img src="<?php echo media_url() ?>img/user.png" class="img-responsive">
                 <?php } ?>
             </div>
             <div class="pull-left info">
@@ -37,29 +37,6 @@
                     <span class="pull-right-container"></span>
                 </a>
             </li>
-
-            <li class="<?php echo ($this->uri->segment(2) == 'posts') ? 'active' : '' ?>">
-                <a href="<?php echo site_url('manage/posts'); ?>">
-                    <i class="fa fa-file-text-o"></i> <span>Posting</span>
-                    <span class="pull-right-container"></span>
-                </a>
-            </li>
-
-            <li class="<?php echo ($this->uri->segment(2) == 'logs') ? 'active' : '' ?>">
-                <a href="<?php echo site_url('manage/logs'); ?>">
-                    <i class="fa fa-history"></i> <span>Logs</span>
-                    <span class="pull-right-container"></span>
-                </a>
-            </li>
-
-            <?php if ($this->session->userdata('uroleid') == SUPERUSER) { ?>
-            <li class="<?php echo ($this->uri->segment(2) == 'users') ? 'active' : '' ?>">
-                <a href="<?php echo site_url('manage/users'); ?>">
-                    <i class="fa fa-users"></i> <span>Manage Users</span>
-                    <span class="pull-right-container"></span>
-                </a>
-            </li>
-            <?php } ?>
 
         </ul>
     </section>

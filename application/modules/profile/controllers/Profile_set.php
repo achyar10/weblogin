@@ -10,7 +10,7 @@ class Profile_set extends CI_Controller {
         if ($this->session->userdata('logged') == NULL) {
             header("Location:" . site_url('manage/auth/login') . "?location=" . urlencode($_SERVER['REQUEST_URI']));
         }
-        $this->load->model(array('users/Users_model','logs/Logs_model'));
+        $this->load->model(array('users/Users_model'));
         $this->load->helper(array('form', 'url'));
     }
     
@@ -33,10 +33,13 @@ class Profile_set extends CI_Controller {
         if ($_POST == TRUE) {
 
             $params['user_id'] = $this->input->post('user_id');
-            $params['user_role_role_id'] = $this->input->post('role_id');
             $params['user_last_update'] = date('Y-m-d H:i:s');
             $params['user_full_name'] = $this->input->post('user_full_name');
-            $params['user_description'] = $this->input->post('user_description');
+            $params['user_gender'] = $this->input->post('user_gender');
+            $params['user_pob'] = $this->input->post('user_pob');
+            $params['user_dob'] = $this->input->post('user_dob');
+            $params['user_phone'] = $this->input->post('user_phone');
+            $params['user_address'] = $this->input->post('user_address');
             $status = $this->Users_model->add($params);
             if (!empty($_FILES['user_image']['name'])) {
                 $paramsupdate['user_image'] = $this->do_upload($name = 'user_image', $fileName= $params['user_full_name']);
@@ -44,18 +47,6 @@ class Profile_set extends CI_Controller {
 
             $paramsupdate['user_id'] = $status;
             $this->Users_model->add($paramsupdate);
-
-            // activity log
-            $this->load->model('logs/Logs_model');
-            $this->Logs_model->add(
-                    array(
-                        'log_date' => date('Y-m-d H:i:s'),
-                        'user_id' => $this->session->userdata('uid'),
-                        'log_module' => 'Profile',
-                        'log_action' => $data['operation'],
-                        'log_info' => 'ID:' . $status . ';Name:' . $this->input->post('user_full_name')
-                    )
-            );
 
             $this->session->set_flashdata('success', $data['operation'] . ' Pengguna Berhasil');
             redirect('manage/profile');
@@ -66,7 +57,6 @@ class Profile_set extends CI_Controller {
 
             // Edit mode
             $data['user'] = $this->Users_model->get(array('id' => $this->session->userdata('uid')));
-            $data['roles'] = $this->Users_model->get_role();
             $data['title'] = $data['operation'] . ' Pengguna';
             $data['main'] = 'profile/profile_edit';
             $this->load->view('manage/layout', $data);
@@ -101,7 +91,6 @@ class Profile_set extends CI_Controller {
 
     // Change Password Manage
     function cpw() {
-        $this->load->model('Logs_model');
         $this->load->library('form_validation');
         $this->form_validation->set_rules('user_password', 'Password', 'required|matches[passconf]|min_length[6]');
         $this->form_validation->set_rules('passconf', 'Password Confirmation', 'required|min_length[6]');
@@ -113,16 +102,6 @@ class Profile_set extends CI_Controller {
             $params['user_password'] = sha1($this->input->post('user_password'));
             $status = $this->Users_model->change_password($this->session->userdata('uid'), $params);
 
-            // activity log
-            $this->Logs_model->add(
-                    array(
-                        'log_date' => date('Y-m-d H:i:s'),
-                        'user_id' => $this->session->userdata('uid'),
-                        'log_module' => 'Pengguna',
-                        'log_action' => 'Ganti Password',
-                        'log_info' => 'ID:null;Title:' . $this->input->post('user_name')
-                    )
-            );
             $this->session->set_flashdata('success', 'Ubah password Pengguna berhasil');
             redirect('manage/profile');
         } else {
