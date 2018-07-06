@@ -24,15 +24,18 @@
         <b>User</b> Konfirmasi
       </div>
       <!-- /.login-logo -->
-      <div class="login-box-body">
+      <div class="login-box-body"> 
         <p class="login-box-msg">Konfirmasi Akun</p>
 
         <?php echo form_open('manage/auth/confirmation'); ?>
 
         <?php if ($this->session->flashdata('success')) { ?>
+          <div class="alert alert-success alert-dismissible">
+            <h5><i class="fa fa-check"></i> <?php echo $this->session->flashdata('success') ?></h5>
+          </div>
+        <?php } elseif ($this->session->flashdata('failed')) { ?>
           <div class="alert alert-danger alert-dismissible">
-            <h5><i class="fa fa-ban"></i> <?php echo $this->session->flashdata('success') ?></h5>
-
+            <h5><i class="fa fa-ban"></i> <?php echo $this->session->flashdata('failed') ?></h5>
           </div>
         <?php } ?>
 
@@ -45,7 +48,7 @@
           <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
-          <input type="text" name="token" class="form-control" placeholder="Kode Token">
+          <input type="text" name="token" class="form-control" placeholder="Kode Aktifasi">
           <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
 

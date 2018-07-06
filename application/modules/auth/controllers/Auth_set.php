@@ -52,12 +52,12 @@ class Auth_set extends CI_Controller {
             redirect('manage');
           }
         } else {
-          $this->session->set_flashdata('success', 'Maaf, Akun anda belum dikonfirmasi');
+          $this->session->set_flashdata('failed', 'Maaf, Akun anda belum dikonfirmasi');
           redirect('manage/auth/login');
         }
       } else {
 
-        $this->session->set_flashdata('success', 'Maaf, username dan password tidak cocok!');
+        $this->session->set_flashdata('failed', 'Maaf, username dan password tidak cocok!');
         redirect('manage/auth/login');
       }
     } else {
@@ -70,11 +70,17 @@ class Auth_set extends CI_Controller {
     $this->load->config('email');
     $this->load->library('email');
     $this->load->helper('string');
+
+    $data = array(
+      'recaptcha_html' => $this->recaptcha->render()
+    );
+
     $this->form_validation->set_rules('user_full_name', 'Nama Lengkap', 'trim|required');
     $this->form_validation->set_rules('user_gender', 'Jenis Kelamin', 'trim|required');
     $this->form_validation->set_rules('user_phone', 'No Handphone', 'trim|required');
     $this->form_validation->set_rules('user_email', 'Email', 'trim|required|is_unique[users.user_email]');
     $this->form_validation->set_rules('user_password', 'Password', 'trim|required');
+    $this->form_validation->set_rules('g-recaptcha-response', '<strong>Captcha</strong>', 'callback_getResponseCaptcha');
     $this->form_validation->set_error_delimiters('<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>', '</div>');
     if ($_POST AND $this->form_validation->run() == TRUE) {
       $email = $this->input->post('user_email', TRUE);
@@ -111,7 +117,7 @@ class Auth_set extends CI_Controller {
         redirect('manage/auth/login');
       }
     } else {
-      $this->load->view('manage/register');
+      $this->load->view('manage/register', $data);
     }
   }
 
@@ -149,12 +155,12 @@ class Auth_set extends CI_Controller {
           $this->session->set_flashdata('success', 'Akun anda berhasil dikonfirmasi, silahkan login');
           redirect('manage/auth/login');
         } else {
-          $this->session->set_flashdata('success', 'Maaf, Konfirmasi Gagal');
+          $this->session->set_flashdata('failed', 'Maaf, Akun anda sudah aktif, silahkan login');
           redirect('manage/auth/login');
         }
       } else {
-        $this->session->set_flashdata('success', 'Maaf, Akun anda sudah aktif, silahkan login');
-        redirect('manage/auth/login');
+        $this->session->set_flashdata('failed', 'Maaf, Konfirmasi Gagal');
+        redirect('manage/auth/confirmation');
       }
     } else {
       $this->load->view('manage/confirmation',$data);
@@ -198,6 +204,7 @@ class Auth_set extends CI_Controller {
         $this->email->message($this->load->view('email/forgot', array('params' => $params), true));
         $this->email->send();
       }
+      $this->session->set_flashdata('success', 'Silahkan cek email untuk mereset password anda');
       redirect('manage/auth/login');
 
     } else {
@@ -206,7 +213,8 @@ class Auth_set extends CI_Controller {
   }
 
   function rpw() {
-
+    $this->load->config('email');
+    $this->load->library('email');
     $this->form_validation->set_rules('password', 'Password', 'trim|required');
     $this->form_validation->set_rules('passconf', 'Konfirmasi password', 'trim|required|xss_clean|matches[password]');
     if ($_POST) {
@@ -219,7 +227,21 @@ class Auth_set extends CI_Controller {
         $user = $this->Users_model->get(array('user_email' => $email, 'password' => $code));
 
         if (count($user) > 0) {
-          $this->Users_model->add(array('user_id' => $user[0]['user_id'], 'user_password' => sha1($password)));
+          $this->Users_model->add(array(
+            'user_id' => $user[0]['user_id'], 
+            'user_password' => sha1($password)
+          ));
+            // Send Email Confirmation
+          if($this->config->item('email'))
+          {
+            $params = array();
+            $this->email->from($this->config->item('from'), $this->config->item('from_name'));
+            $this->email->to($user[0]['user_email']); 
+            $this->email->subject('Reset Password');
+            $this->email->message($this->load->view('email/reset', array('params' => $params), true));
+            $this->email->send();
+          } 
+          $this->session->set_flashdata('success', 'Password anda berhasil direset silahkan login');
           redirect('manage/auth/login');
         }else{
           redirect(site_url());
@@ -235,7 +257,7 @@ class Auth_set extends CI_Controller {
         $data['email'] = $q['e'];
         $data['code'] = $q['c'];
         $this->load->view('manage/rpw', $data);
-      }else{
+      } else {
         redirect('manage');
       }
 

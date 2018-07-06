@@ -56,7 +56,10 @@
           <label>No. Handphone</label>
           <input type="text" class="form-control" name="user_phone" placeholder="Nomor Handphone Anda">
         </div>
-        
+        <div class="form-group">
+          <?php echo $recaptcha_html;?>
+          <?php echo form_error('g-recaptcha-response'); ?>
+        </div>
         <div class="row">
           <div class="col-xs-8">
 

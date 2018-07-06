@@ -28,9 +28,13 @@
         <?php echo form_open('manage/auth/rpw'); ?>
 
         <!-- Jika Error -->
-        <?php if ($this->session->flashdata('failed')) { ?>
-          <div class="danger">
-            <h5><center><?php echo $this->session->flashdata('failed') ?></center></h5>
+        <?php if ($this->session->flashdata('success')) { ?>
+          <div class="alert alert-success alert-dismissible">
+            <h5><i class="fa fa-check"></i> <?php echo $this->session->flashdata('success') ?></h5>
+          </div>
+        <?php } elseif ($this->session->flashdata('failed')) { ?>
+          <div class="alert alert-danger alert-dismissible">
+            <h5><i class="fa fa-ban"></i> <?php echo $this->session->flashdata('failed') ?></h5>
           </div>
         <?php } ?>
 
